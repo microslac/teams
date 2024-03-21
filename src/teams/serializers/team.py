@@ -10,10 +10,11 @@ class TeamSerializer(BaseModelSerializer):
     updated = TimestampField(required=False, read_only=True)
     creator = serializers.CharField(required=True, write_only=True)
     updater = serializers.CharField(required=False, read_only=True)
+    is_open = serializers.BooleanField(required=False, default=False)
 
     class Meta:
         model = Team
-        fields = ("id", "name", "domain", "created", "creator", "updated", "updater")
+        fields = ("id", "name", "domain", "is_open", "created", "creator", "updated", "updater")
         read_only_fields = ("created", "updated")
 
     def validate_domain(self, value):
@@ -25,5 +26,5 @@ class TeamSerializer(BaseModelSerializer):
         data = super().to_representation(instance)
         data.update(creator=instance.creator_id)
         data.update(updater=instance.updater_id)
-        data = {k: v for k, v in data.items() if v}
+        data = {k: v for k, v in data.items() if v is not None}
         return data

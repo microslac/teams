@@ -10,3 +10,4 @@ class TestTeamModel(UnitTestBase):
         assert team.name == "team"
         assert team.id.startswith("T")
         assert team.domain == "team.com"
+        assert team.is_open is False

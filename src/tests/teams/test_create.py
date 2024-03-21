@@ -1,4 +1,5 @@
 import pytest
+from random import randint
 from rest_framework import status
 
 from tests.teams import TeamsTestBase
@@ -25,9 +26,11 @@ class TestTeamsCrud(TeamsTestBase):
     @pytest.mark.parametrize("payload", [("team", "team.com")])
     def test_create_team_success(self, client, payload):
         name, domain = payload
-        data = dict(name=name, domain=domain)
+        is_open = bool(randint(0, 1))
+        data = dict(name=name, domain=domain, is_open=is_open)
         resp = self.client_request(f"{self.URL}/create", data=data, status=status.HTTP_200_OK, ok=True)
         assert resp.team.id.startswith("T")
         assert resp.team.name == name
         assert resp.team.domain == domain
         assert resp.team.creator is not None
+        assert resp.team.is_open == is_open

@@ -8,7 +8,8 @@ class TeamService(BaseService):
     def create_team(cls, creator_id: str, *, data: dict) -> Team:
         name = data.pop("name")
         domain = data.pop("domain")
-        team = Team.objects.create(creator_id=creator_id, name=name, domain=domain)
+        is_open = data.pop("is_open", False)
+        team = Team.objects.create(creator_id=creator_id, name=name, domain=domain, is_open=is_open)
         return team
 
     @classmethod

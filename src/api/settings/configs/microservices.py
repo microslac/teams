@@ -2,27 +2,23 @@ import re
 from types import SimpleNamespace
 from api.settings import env
 
-# BASE
-MICROSERVICE_BASE_HOST = env.str("MICROSERVICE_BASE_HOST", default="")  # localhost
+# TODO: hardcoded and read from default env (not django, framework agnostic)
+MICROSERVICE = SimpleNamespace(
+    AUTH_HOST=env.str("MICROSERVICE_AUTH_HOST", default="auth"),
+    AUTH_PORT=env.int("MICROSERVICE_AUTH_HOST", default=8011),
 
-# Admin
-MICROSERVICE_ADMIN_HOST = env.str("MICROSERVICE_ADMIN_HOST", default=MICROSERVICE_BASE_HOST or "admin")
-MICROSERVICE_ADMIN_PORT = env.int("MICROSERVICE_ADMIN_HOST", default=8010)
+    TEAMS_HOST=env.str("MICROSERVICE_TEAMS_HOST", default="teams"),
+    TEAMS_PORT=env.int("MICROSERVICE_TEAMS_HOST", default=8012),
 
-# Auth
-MICROSERVICE_AUTH_HOST = env.str("MICROSERVICE_AUTH_HOST", default=MICROSERVICE_BASE_HOST or "auth")
-MICROSERVICE_AUTH_PORT = env.int("MICROSERVICE_AUTH_HOST", default=8011)
+    USERS_HOST=env.str("MICROSERVICE_USERS_HOST", default="users"),
+    USERS_PORT=env.int("MICROSERVICE_USERS_HOST", default=8013),
 
-# Teams
-MICROSERVICE_TEAMS_HOST = env.str("MICROSERVICE_TEAMS_HOST", default=MICROSERVICE_BASE_HOST or "teams")
-MICROSERVICE_TEAMS_PORT = env.int("MICROSERVICE_TEAMS_HOST", default=8012)
-
-# Users
-MICROSERVICE_USERS_HOST = env.str("MICROSERVICE_USERS_HOST", default=MICROSERVICE_BASE_HOST or "users")
-MICROSERVICE_USERS_PORT = env.int("MICROSERVICE_USERS_HOST", default=8013)
-
-# Conversations
-MICROSERVICE_CONVERSATIONS_HOST = env.str(
-    "MICROSERVICE_CONVERSATIONS_HOST", default=(MICROSERVICE_BASE_HOST or "conversations")
+    CONVERSATION_HOST=env.str("MICROSERVICE_CONVERSATIONS_HOST", default="conversations"),
+    CONVERSATIONS_PORT=env.int("MICROSERVICE_CONVERSATIONS_HOST", default=8013),
 )
-MICROSERVICE_CONVERSATIONS_PORT = env.int("MICROSERVICE_CONVERSATIONS_HOST", default=8014)
+
+MICROSERVICE_BASE_HOST = env.str("MICROSERVICE_BASE_HOST", default="")  # localhost
+if MICROSERVICE_BASE_HOST:
+    hosts = [host for host in vars(MICROSERVICE) if re.match(r".*_HOST$", host)]
+    for host in hosts:
+        setattr(MICROSERVICE, host, MICROSERVICE_BASE_HOST)
