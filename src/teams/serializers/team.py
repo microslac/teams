@@ -1,16 +1,16 @@
 import validators
-from core.serializers import BaseModelSerializer, TimestampField
+from micro.jango.serializers import BaseModelSerializer, TimestampField
 from rest_framework import serializers
 
 from teams.models import Team
 
 
 class TeamSerializer(BaseModelSerializer):
+    creator = serializers.CharField(required=True, write_only=True)
+    is_open = serializers.BooleanField(required=False, default=False)
     created = TimestampField(required=False, read_only=True)
     updated = TimestampField(required=False, read_only=True)
-    creator = serializers.CharField(required=True, write_only=True)
     updater = serializers.CharField(required=False, read_only=True)
-    is_open = serializers.BooleanField(required=False, default=False)
 
     class Meta:
         model = Team

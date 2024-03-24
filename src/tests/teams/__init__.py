@@ -1,4 +1,3 @@
-import pytest
 from tests.base import ApiTestBase
 
 

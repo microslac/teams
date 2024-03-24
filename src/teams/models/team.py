@@ -1,5 +1,5 @@
-from core.models import DeletedModel, HistoryModel, UUIDModel
-from core.models.fields import ShortIdField
+from micro.jango.models import DeletedModel, HistoryModel, UUIDModel
+from micro.jango.models.fields import ShortIdField
 from django.db import models
 
 

@@ -1,4 +1,4 @@
-from core.services import BaseService
+from micro.jango.services import BaseService
 
 from teams.models import Team
 
