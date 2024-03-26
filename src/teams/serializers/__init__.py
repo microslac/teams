@@ -1,1 +1,1 @@
-from .team import TeamSerializer
+from .team import TeamSerializer, JoinTeamSerializer

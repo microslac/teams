@@ -1,5 +1,5 @@
 import validators
-from micro.jango.serializers import BaseModelSerializer, TimestampField
+from micro.jango.serializers import BaseModelSerializer, TimestampField, BaseSerializer
 from rest_framework import serializers
 
 from teams.models import Team
@@ -28,3 +28,8 @@ class TeamSerializer(BaseModelSerializer):
         data.update(updater=instance.updater_id)
         data = {k: v for k, v in data.items() if v is not None}
         return data
+
+
+class JoinTeamSerializer(BaseSerializer):
+    auth = serializers.CharField(required=True, allow_blank=False)
+    team = serializers.CharField(required=True, allow_blank=False)

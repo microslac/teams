@@ -1,9 +1,14 @@
 from micro.jango.services import BaseService
 
 from teams.models import Team
+from teams.sagas.join_team import JoinTeamSaga
 
 
 class TeamService(BaseService):
+    @classmethod
+    def get_team(cls, team_id: str) -> Team:
+        return Team.objects.get(id=team_id)
+
     @classmethod
     def create_team(cls, creator_id: str, *, data: dict) -> Team:
         name = data.pop("name")
@@ -39,3 +44,10 @@ class TeamService(BaseService):
     def destroy_team(cls, team_id: str):
         team = Team.objects.get(id=team_id)
         team.destroy()
+
+    @classmethod
+    def join_team(cls, team_id: str, auth_id: str) -> Team:
+        team = cls.get_team(team_id)
+        saga = JoinTeamSaga(team_id=team.id, auth_id=auth_id)
+        saga.run()
+        return team

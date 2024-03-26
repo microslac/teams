@@ -17,8 +17,8 @@ MICROSERVICE = SimpleNamespace(
     CONVERSATIONS_PORT=env.int("MICROSERVICE_CONVERSATIONS_HOST", default=8013),
 )
 
-MICROSERVICE_BASE_HOST = env.str("MICROSERVICE_BASE_HOST", default="")  # localhost
-if MICROSERVICE_BASE_HOST:
+MICROSERVICE_ALL_HOST = env.str("MICROSERVICE_ALL_HOST", default="")  # localhost
+if MICROSERVICE_ALL_HOST:
     hosts = [host for host in vars(MICROSERVICE) if re.match(r".*_HOST$", host)]
     for host in hosts:
-        setattr(MICROSERVICE, host, MICROSERVICE_BASE_HOST)
+        setattr(MICROSERVICE, host, MICROSERVICE_ALL_HOST)
