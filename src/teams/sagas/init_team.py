@@ -10,11 +10,11 @@ class CreateAuth(Step):
 
     def action(self):
         data = dict(email=self.email, password=self.password)
-        auth = AuthService.post("/internal/create", data=data, key="auth")
-        self.state.auth = State(id=auth.pop("id"))
+        auth = AuthService.post("/internal/create", data=data, key="auth", objectify=True)
+        self.state.auth = auth
 
     def compensate(self):
-        data = dict(id=self.state.auth.id)
+        data = dict(auth=self.state.auth.id)
         AuthService.post("/internal/destroy", data=data)
 
 
@@ -39,11 +39,11 @@ class CreateUser(Step):
 
     def action(self):
         data = dict(team=self.state.team.id, auth=self.state.auth.id, name=self.name)
-        user = UsersService.post("/internal/create", data=data, key="user")
-        self.state.user = State(id=user.pop("id"))
+        user = UsersService.post("/internal/create", data=data, key="user", objectify=True)
+        self.state.user = user
 
     def compensate(self):
-        data = dict(id=self.state.user.id)
+        data = dict(user=self.state.user.id)
         UsersService.post("/internal/destroy", data=data)
 
 
@@ -54,19 +54,21 @@ class CreateBaseChannels(Step):
             "/internal/create",
             data=dict(name="general", is_general=True, **data),
             internal=True,
-            key="channel"
+            key="channel",
+            objectify=True
         )
         random_channel = ConversationsService.post(
             "/internal/create",
             data=dict(name="random", is_random=True, **data),
             internal=True,
-            key="channel"
+            key="channel",
+            objectify=True
         )
-        self.state.channel_ids = [general_channel.pop("id"), random_channel.pop("id")]
+        self.state.channels = [general_channel, random_channel]
 
     def compensate(self):
-        for channel_id in self.state.channel_ids:
-            data = dict(team=self.state.team.id, id=channel_id)
+        for channel in self.state.channels:
+            data = dict(team=self.state.team.id, channel=channel.id)
             ConversationsService.post("/internal/destroy", data=data)
 
 

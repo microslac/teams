@@ -1,6 +1,6 @@
-from micro.events.registry import CommunicationEvents
 from micro.patterns.saga import Saga, Step, State
 from micro.services.registry import AuthService, UsersService, ConversationsService
+from teams.services.publishers import communication
 
 
 class InfoAuth(Step):
@@ -18,7 +18,7 @@ class CreateUser(Step):
         self.state.user = user
 
     def compensate(self):
-        data = dict(id=self.state.user.id)
+        data = dict(user=self.state.user.id)
         UsersService.post("/internal/destroy", data=data)
 
 
@@ -39,7 +39,7 @@ class JoinBaseChannel(Step):
         self.channel = channel
 
     def compensate(self):
-        data = dict(team=self.state.team.id, user=self.state.user.id, id=self.channel.id)
+        data = dict(team=self.state.team.id, user=self.state.user.id, channel=self.channel.id)
         ConversationsService.post("/internal/kick", data=data)
 
 
@@ -57,4 +57,4 @@ class JoinTeamSaga(Saga):
 
     def on_success(self):
         payload = dict(auth=self.state.auth.id, team=self.state.team.id, user=self.state.user.id)
-        CommunicationEvents.publish(payload, routing_key="team.user.joined")
+        communication.publish(payload, routing_key="team.user.joined")
