@@ -39,7 +39,7 @@ class CreateUser(Step):
         self.name = name
 
     def action(self):
-        data = dict(team=self.state.team.id, auth=self.state.auth.id, name=self.name)
+        data = dict(team=self.state.team.id, auth=self.state.auth.id, email=self.state.auth.email, name=self.name)
         user = UsersService.post("/internal/create", data=data, key="user", objectify=True)
         self.state.user = user
 

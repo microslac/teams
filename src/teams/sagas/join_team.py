@@ -5,7 +5,7 @@ from micro.services.registry import AuthService, ConversationsService, UsersServ
 
 class InfoAuth(Step):
     def action(self):
-        data = dict(id=self.state.auth.id)
+        data = dict(auth=self.state.auth.id)
         auth = AuthService.post("/internal/info", data=data, key="auth", objectify=True)
         self.state.auth = auth
 
